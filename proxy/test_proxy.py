@@ -31,7 +31,6 @@ def test_static_method_get_new_proxy_for_url():
     # # "https://www.mcallen.net/departments/bridge/mcallen-hidalgo"
     # # "https://www.mcallen.net/departments/bridge/anzalduas"
     # # "https://www.netrma.org/net-rma-policies/toll-rates/"
-    # # "https://www.netrma.org/net-rma-policies/toll-rates/"
     print(Proxy.get_new_proxy_for_url(url="https://www.mcallen.net/departments/bridge/mcallen-hidalgo"))
 
 

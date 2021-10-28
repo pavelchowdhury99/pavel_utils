@@ -144,16 +144,6 @@ def main():
     requests.get("https://www.netrma.org/net-rma-policies/toll-rates/", proxies=x, verify=False)
     logger.info("Done!!!!")
 
-
-@log_durations(logging.info)
-def test():
-    cycle_obj = Proxy.get_proxy_rotator()
-    for idx, proxy in enumerate(cycle_obj):
-        if idx > 4:
-            break
-        print(proxy)
-
-
 # Test urls
 # "https://www.mcallen.net/departments/bridge/mcallen-hidalgo"
 # "https://www.mcallen.net/departments/bridge/anzalduas"
@@ -165,4 +155,4 @@ def test():
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         datefmt='%H:%M:%S', level=logging.DEBUG)
-    test()
+    main()
