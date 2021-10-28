@@ -7,6 +7,8 @@ import pytest
 
 from .proxy import Proxy
 
+print(Proxy())
+
 logger = logging.getLogger(__name__)
 
 
@@ -81,7 +83,5 @@ class TestProxy:
             assert new_proxy.get("http") is not None
 
 
-if __name__ == "__main__":
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        datefmt='%H:%M:%S', level=logging.DEBUG)
-    pytest.main(["-v", f'{os.path.realpath(__file__)}:test_get_proxy_rotator'])
+# To run tests use
+# pytest -v  proxy\test_proxy.py
