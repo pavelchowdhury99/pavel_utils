@@ -21,7 +21,8 @@ class Proxy:
     with open(Path(os.path.join(os.path.dirname(__file__), 'user_agents.json')), 'r') as f:
         __user_agent_list = json.load(f).get("user_agents")
         logger.debug(f"Loaded list of user agents from json file")
-        logger.debug(f"First and last are - {__user_agent_list[0]} and {__user_agent_list[-1]}")
+        logger.debug(
+            f"First and last are - {__user_agent_list[0]} and {__user_agent_list[-1]}")
 
     @functools.lru_cache
     def __init__(self):
@@ -36,7 +37,7 @@ class Proxy:
         return {"User-Agent": random.choice(self.__user_agent_list)}
 
     @classmethod
-    def get_random_user_agent(cls):
+    def get_random_user_agent(cls) -> dict:
         """Provides a random user agent from list of user agents"""
         logger.debug("Fetching a random user agent...")
         return {"User-Agent": random.choice(cls.__user_agent_list)}
@@ -49,7 +50,7 @@ class Proxy:
 
         # getting page content of the proxy list page
         proxy_df = pd.read_html(requests.get(
-            proxy_website_url, timeout=200).text)
+            proxy_website_url, timeout=200, headers=Proxy.get_random_user_agent()).text)
 
         # checking if the url which needs proxy is secured or not
         # and filtering the proxy list based on that
@@ -68,7 +69,8 @@ class Proxy:
             # proxy_dict[key] = f"{key}://{proxy[1]['IP Address']}:{int(proxy[1]['Port'])}"
             proxy_dict[key] = f"http://{proxy[1]['IP Address']}:{int(proxy[1]['Port'])}"
             try:
-                if requests.get(url, proxies=proxy_dict, verify=verify, timeout=timeout).ok:
+                if requests.get(url, proxies=proxy_dict, verify=verify,
+                                timeout=timeout, headers=Proxy.get_random_user_agent()).ok:
                     logging.info(f"Using proxy {proxy_dict}")
                     return proxy_dict
             except Exception as e:
@@ -81,7 +83,8 @@ class Proxy:
                                   proxy_json_path: str = os.path.join(os.path.dirname(__file__),
                                                                       'proxy.json')) -> dict:
         try:
-            if requests.get(url, proxies=self.__proxy).ok:
+            if requests.get(url, proxies=self.__proxy,
+            headers=Proxy.get_random_user_agent()).ok:
                 logger.info(f"Using existing proxies {self.__proxy}")
                 return self.__proxy
             else:
@@ -100,7 +103,8 @@ class Proxy:
         finally:
             with open(proxy_json_path, 'w') as f:
                 json.dump(self.__proxy, f)
-                logger.info(f"Wrote new proxy {self.__proxy} to {proxy_json_path}")
+                logger.info(
+                    f"Wrote new proxy {self.__proxy} to {proxy_json_path}")
 
     # @staticmethod
     # def get_proxy_by_location(location: str) -> dict:
@@ -137,11 +141,14 @@ class Proxy:
 def main():
     proxy = Proxy()
     logger.info(proxy.user_agent)
-    x = proxy.get_working_proxy_for_url(url="https://www.netrma.org/net-rma-policies/toll-rates/", verify=False)
+    x = proxy.get_working_proxy_for_url(
+        url="https://www.netrma.org/net-rma-policies/toll-rates/", verify=False)
     logger.info("sleeping for 2 secs...")
     time.sleep(2)
     logger.info("Just woke up!")
-    requests.get("https://www.netrma.org/net-rma-policies/toll-rates/", proxies=x, verify=False)
+    requests.get(
+        "https://www.netrma.org/net-rma-policies/toll-rates/", proxies=x,
+        verify=False,headers=Proxy.get_random_user_agent())
     logger.info("Done!!!!")
 
 # Test urls
@@ -151,6 +158,7 @@ def main():
 
 # References
 # https://stackoverflow.com/questions/66642705/why-requests-raise-this-exception-check-hostname-requires-server-hostname
+
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
